@@ -1,142 +1,196 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, Search, UserPlus, LogIn, X, PlusCircle } from 'lucide-react'
+import { ArrowUpRight, ChevronDown, Menu, Search, X } from 'lucide-react'
 import { SITE_CONFIG } from '@/lib/site-config'
-import { globalContent } from '@/editable/content/global.content'
+import { CATEGORY_OPTIONS } from '@/lib/categories'
 import { useEditableLocalAuthSession } from '@/editable/components/EditableLocalAuthForms'
+
+const COLLECTIONS = CATEGORY_OPTIONS.slice(0, 8).map((c) => ({ label: c.name, href: `/sbm?category=${c.slug}` }))
 
 export function EditableNavbar() {
   const [open, setOpen] = useState(false)
+  const [collectionsOpen, setCollectionsOpen] = useState(false)
   const pathname = usePathname()
   const { session, logout } = useEditableLocalAuthSession()
-  const navItems = useMemo(
-    () => SITE_CONFIG.tasks.filter((task) => task.enabled).map((task) => ({ label: task.label, href: task.route })),
-    []
-  )
+
+  useEffect(() => {
+    setOpen(false)
+    setCollectionsOpen(false)
+  }, [pathname])
+
+  const links = [
+    { label: 'Home', href: '/' },
+    { label: 'Library', href: '/sbm' },
+    { label: 'About', href: '/about' },
+    { label: 'Contact', href: '/contact' },
+  ]
+
+  const container = 'mx-auto w-full max-w-[var(--editable-container)] px-5 sm:px-8 lg:px-10'
 
   return (
-    <header className="sticky top-0 z-50 bg-[var(--editable-nav-bg)]/96 text-[var(--editable-nav-text)] backdrop-blur-md">
-      <div className="h-[3px] bg-[linear-gradient(90deg,transparent_0%,var(--slot4-accent)_20%,var(--slot4-accent)_80%,transparent_100%)]" />
-
-      <nav className="mx-auto flex min-h-[76px] w-full max-w-[var(--editable-container)] items-center gap-5 px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="group flex shrink-0 items-center gap-3 border-r border-[var(--editable-border)] pr-5">
-          <span className="flex h-11 w-11 items-center justify-center border border-[var(--slot4-accent)]/45 bg-[var(--slot4-surface-bg)] transition group-hover:border-[var(--slot4-accent)]">
-            <img src="/favicon.png?v=20260413" alt={SITE_CONFIG.name} className="h-8 w-8 object-contain" />
-          </span>
-          <span className="hidden min-w-0 md:block">
-            <span className="editable-display block max-w-[200px] truncate text-xl font-semibold leading-none tracking-[0.01em]">{SITE_CONFIG.name}</span>
-            <span className="mt-1 block max-w-[200px] truncate text-[10px] font-medium uppercase tracking-[0.26em] text-[var(--slot4-muted-text)]">
-              {globalContent.nav?.tagline || SITE_CONFIG.tagline}
+    <header className="sticky top-0 z-50">
+      {/* Main navbar */}
+      <div className="border-b border-[var(--editable-border)] bg-[var(--editable-nav-bg)] text-[var(--editable-nav-text)]">
+        <nav className={`${container} flex h-20 items-center gap-6`}>
+          <Link href="/" className="flex shrink-0 items-center gap-3">
+            <span className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-[var(--slot4-dark-bg)]">
+              <img src="/favicon.png?v=20260413" alt={SITE_CONFIG.name} className="h-10 w-10 object-contain" />
             </span>
-          </span>
-        </Link>
+            <span className="editable-display text-lg font-medium tracking-[-0.01em]">{SITE_CONFIG.name}</span>
+          </Link>
 
-        <div className="hidden items-stretch gap-0 lg:flex">
-          {navItems.slice(0, 5).map((item) => {
-            const active = pathname === item.href || pathname.startsWith(`${item.href}/`)
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`relative flex items-center px-4 text-[11px] font-semibold uppercase tracking-[0.22em] transition ${
-                  active ? 'text-[var(--slot4-accent)]' : 'text-[var(--slot4-muted-text)] hover:text-[var(--slot4-page-text)]'
-                }`}
-              >
-                {item.label}
-                {active ? <span className="absolute inset-x-3 bottom-0 h-[2px] bg-[var(--slot4-accent)]" /> : null}
-              </Link>
-            )
-          })}
-        </div>
-
-        <form action="/search" className="mx-auto hidden min-w-0 flex-1 justify-center md:flex">
-          <label className="flex w-full max-w-md items-center gap-2 border-b border-[var(--slot4-accent)]/30 pb-2 transition focus-within:border-[var(--slot4-accent)]">
-            <Search className="h-4 w-4 shrink-0 text-[var(--slot4-accent)]" />
-            <input
-              name="q"
-              type="search"
-              placeholder="Search posts"
-              className="min-w-0 flex-1 bg-transparent text-sm font-medium outline-none placeholder:text-[var(--slot4-muted-text)]"
-            />
-          </label>
-        </form>
-
-        <div className="ml-auto flex shrink-0 items-center gap-2">
-          {session ? (
-            <>
-              <Link
-                href="/create"
-                className="hidden items-center gap-2 border border-[var(--slot4-accent)] bg-[var(--editable-cta-bg)] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--editable-cta-text)] transition hover:opacity-90 sm:inline-flex"
-              >
-                <PlusCircle className="h-3.5 w-3.5" /> Create
-              </Link>
-              <button
-                type="button"
-                onClick={logout}
-                className="hidden items-center gap-2 px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--slot4-muted-text)] transition hover:text-[var(--slot4-page-text)] sm:inline-flex"
-              >
-                Logout
-              </button>
-            </>
-          ) : (
-            <>
-              <Link
-                href="/login"
-                className="hidden items-center gap-2 border border-[var(--editable-border)] px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--slot4-muted-text)] transition hover:border-[var(--slot4-accent)]/40 hover:text-[var(--slot4-page-text)] sm:inline-flex"
-              >
-                <LogIn className="h-3.5 w-3.5" /> Login
-              </Link>
-              <Link
-                href="/signup"
-                className="hidden items-center gap-2 border border-[var(--slot4-accent)] bg-[var(--editable-cta-bg)] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--editable-cta-text)] transition hover:opacity-90 sm:inline-flex"
-              >
-                <UserPlus className="h-3.5 w-3.5" /> Sign up
-              </Link>
-            </>
-          )}
-          <button
-            type="button"
-            onClick={() => setOpen((value) => !value)}
-            className="border border-[var(--editable-border)] bg-[var(--slot4-surface-bg)] p-2 lg:hidden"
-            aria-label="Toggle menu"
-          >
-            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
-        </div>
-      </nav>
-
-      <div className="h-px bg-[var(--editable-border)]" />
-
-      {open ? (
-        <div className="border-t border-[var(--editable-border)] bg-[var(--editable-nav-bg)] px-4 py-5 lg:hidden">
-          <form action="/search" className="mb-5 flex items-center gap-2 border-b border-[var(--slot4-accent)]/30 pb-2">
-            <Search className="h-4 w-4 text-[var(--slot4-accent)]" />
-            <input name="q" type="search" placeholder="Search posts" className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-[var(--slot4-muted-text)]" />
-          </form>
-          <div className="grid gap-1">
-            {[{ label: 'Home', href: '/' }, ...navItems, { label: 'Contact', href: '/contact' }, ...(session ? [{ label: 'Create', href: '/create' }] : [{ label: 'Login', href: '/login' }, { label: 'Sign up', href: '/signup' }])].map((item) => {
-              const active = pathname === item.href || pathname.startsWith(`${item.href}/`)
+          {/* Center menu */}
+          <div className="hidden flex-1 items-center justify-center gap-1 lg:flex">
+            {links.map((item) => {
+              const active = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href)
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  onClick={() => setOpen(false)}
-                  className={`border-l-2 px-4 py-3 text-sm font-semibold uppercase tracking-[0.16em] ${
-                    active
-                      ? 'border-[var(--slot4-accent)] bg-[var(--slot4-surface-bg)] text-[var(--slot4-accent)]'
-                      : 'border-transparent text-[var(--slot4-muted-text)] hover:border-[var(--slot4-accent)]/40 hover:bg-[var(--slot4-surface-bg)]'
+                  className={`px-4 py-2 text-[14px] font-medium transition duration-300 ${
+                    active ? 'text-[var(--slot4-accent)]' : 'text-[var(--slot4-page-text)] hover:text-[var(--slot4-accent)]'
                   }`}
                 >
                   {item.label}
                 </Link>
               )
             })}
+            <div className="relative">
+              <button
+                type="button"
+                onMouseEnter={() => setCollectionsOpen(true)}
+                onMouseLeave={() => setCollectionsOpen(false)}
+                onClick={() => setCollectionsOpen((v) => !v)}
+                className="inline-flex items-center gap-1 px-4 py-2 text-[14px] font-medium text-[var(--slot4-page-text)] transition duration-300 hover:text-[var(--slot4-accent)]"
+                aria-expanded={collectionsOpen}
+              >
+                Collections <ChevronDown className={`h-3.5 w-3.5 transition duration-300 ${collectionsOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {collectionsOpen ? (
+                <div
+                  onMouseEnter={() => setCollectionsOpen(true)}
+                  onMouseLeave={() => setCollectionsOpen(false)}
+                  className="absolute left-1/2 top-full z-50 min-w-[220px] -translate-x-1/2 pt-2"
+                >
+                  <div className="rounded border border-[var(--editable-border)] bg-[var(--slot4-surface-bg)] p-2 shadow-[0_8px_30px_rgba(27,25,23,0.08)]">
+                    {COLLECTIONS.map((collection) => (
+                      <Link
+                        key={collection.href}
+                        href={collection.href}
+                        className="flex items-center justify-between gap-3 rounded px-3 py-2 text-[14px] font-medium text-[var(--slot4-page-text)] transition duration-300 hover:bg-[var(--slot4-panel-bg)] hover:text-[var(--slot4-accent)]"
+                      >
+                        {collection.label} <ArrowUpRight className="h-3.5 w-3.5" />
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+            </div>
           </div>
-        </div>
-      ) : null}
+
+          {/* Right actions */}
+          <div className="ml-auto flex shrink-0 items-center gap-2">
+            <Link
+              href="/search"
+              className="flex h-10 w-10 items-center justify-center rounded-full transition duration-300 hover:bg-[var(--slot4-panel-bg)]"
+              aria-label="Search"
+            >
+              <Search className="h-[18px] w-[18px] text-[var(--slot4-muted-text)]" />
+            </Link>
+
+            {session ? (
+              <>
+                <Link
+                  href="/create"
+                  className="hidden items-center gap-2 rounded-full bg-[var(--slot4-accent)] px-5 py-2.5 text-[14px] font-medium text-white transition duration-300 hover:opacity-90 sm:inline-flex"
+                >
+                  Suggest a resource <ArrowUpRight className="h-4 w-4" />
+                </Link>
+                <button
+                  type="button"
+                  onClick={logout}
+                  className="hidden rounded-full px-4 py-2 text-[14px] font-medium text-[var(--slot4-muted-text)] transition duration-300 hover:text-[var(--slot4-page-text)] lg:inline-flex"
+                >
+                  Sign out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="hidden rounded-full px-4 py-2 text-[14px] font-medium text-[var(--slot4-muted-text)] transition duration-300 hover:text-[var(--slot4-page-text)] lg:inline-flex"
+                >
+                  Sign in
+                </Link>
+                <Link
+                  href="/contact"
+                  className="hidden items-center gap-2 rounded-full bg-[var(--slot4-accent)] px-5 py-2.5 text-[14px] font-medium text-white transition duration-300 hover:opacity-90 sm:inline-flex"
+                >
+                  Suggest a resource <ArrowUpRight className="h-4 w-4" />
+                </Link>
+              </>
+            )}
+
+            <button
+              type="button"
+              onClick={() => setOpen((v) => !v)}
+              className="flex h-10 w-10 items-center justify-center rounded-full transition duration-300 hover:bg-[var(--slot4-panel-bg)] lg:hidden"
+              aria-label="Toggle menu"
+            >
+              {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+          </div>
+        </nav>
+
+        {/* Mobile menu */}
+        {open ? (
+          <div className="border-t border-[var(--editable-border)] bg-[var(--editable-nav-bg)] lg:hidden">
+            <div className={`${container} py-5`}>
+              <div className="grid gap-1">
+                {links.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setOpen(false)}
+                    className="rounded px-4 py-3 text-[15px] font-medium text-[var(--slot4-page-text)] transition duration-300 hover:bg-[var(--slot4-panel-bg)] hover:text-[var(--slot4-accent)]"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+                <p className="mt-3 px-4 text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--slot4-soft-muted-text)]">Collections</p>
+                {COLLECTIONS.map((collection) => (
+                  <Link
+                    key={collection.href}
+                    href={collection.href}
+                    onClick={() => setOpen(false)}
+                    className="flex items-center justify-between rounded px-4 py-2.5 text-[14px] font-medium text-[var(--slot4-muted-text)] transition duration-300 hover:bg-[var(--slot4-panel-bg)] hover:text-[var(--slot4-accent)]"
+                  >
+                    {collection.label} <ArrowUpRight className="h-3.5 w-3.5" />
+                  </Link>
+                ))}
+                <div className="mt-4 grid gap-2 border-t border-[var(--editable-border)] pt-4">
+                  {session ? (
+                    <>
+                      <Link href="/create" onClick={() => setOpen(false)} className="inline-flex items-center justify-center gap-2 rounded-full bg-[var(--slot4-accent)] px-5 py-3 text-[14px] font-medium text-white">
+                        Suggest a resource <ArrowUpRight className="h-4 w-4" />
+                      </Link>
+                      <button type="button" onClick={() => { logout(); setOpen(false) }} className="rounded-full border border-[var(--editable-border)] px-5 py-3 text-[14px] font-medium">Sign out</button>
+                    </>
+                  ) : (
+                    <>
+                      <Link href="/login" onClick={() => setOpen(false)} className="rounded-full border border-[var(--editable-border)] px-5 py-3 text-center text-[14px] font-medium">Sign in</Link>
+                      <Link href="/signup" onClick={() => setOpen(false)} className="rounded-full bg-[var(--slot4-accent)] px-5 py-3 text-center text-[14px] font-medium text-white">Sign up</Link>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : null}
+      </div>
     </header>
   )
 }
