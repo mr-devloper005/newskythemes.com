@@ -18,13 +18,13 @@ export function EmptyState({
   className,
 }: EmptyStateProps) {
   return (
-    <section className={cn('rounded-[2rem] border border-current/10 bg-current/[0.03] p-8 text-center', className)}>
-      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-current/10">
-        <SearchX className="h-6 w-6" />
+    <section className={cn('rounded border border-[var(--editable-border)] bg-[var(--slot4-surface-bg)] p-8 text-center', className)}>
+      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[var(--slot4-accent)]/10">
+        <SearchX className="h-6 w-6 text-[var(--slot4-accent)]" />
       </div>
-      <h2 className="mt-5 text-2xl font-semibold tracking-[-0.03em]">{title}</h2>
-      <p className="mx-auto mt-3 max-w-xl text-sm leading-7 text-current/65">{description}</p>
-      <Link href={actionHref} className="mt-6 inline-flex items-center gap-2 rounded-full border border-current/15 px-5 py-3 text-sm font-semibold transition hover:bg-current hover:text-background">
+      <h2 className="editable-display mt-5 text-xl font-medium tracking-[-0.02em]">{title}</h2>
+      <p className="mx-auto mt-3 max-w-xl text-[14px] leading-7 text-[var(--slot4-muted-text)]">{description}</p>
+      <Link href={actionHref} className="mt-6 inline-flex items-center gap-2 rounded-full border border-[var(--editable-border)] px-5 py-3 text-[14px] font-medium transition duration-300 hover:border-[var(--slot4-accent)]">
         {actionLabel}
         <ArrowRight className="h-4 w-4" />
       </Link>

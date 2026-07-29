@@ -1,36 +1,39 @@
 import { slot4BrandConfig } from '@/editable/theme/brand.config'
 
+export const uiHiddenTaskKeys = ['profile'] as const
+export const isUiHiddenTask = (key: string) =>
+  (uiHiddenTaskKeys as readonly string[]).includes(key)
+
 export const globalContent = {
   site: {
     name: slot4BrandConfig.siteName,
-    tagline: slot4BrandConfig.tagline || 'Independent reading platform',
+    tagline: slot4BrandConfig.tagline || 'Curated resources worth saving',
     domain: slot4BrandConfig.domain,
     baseUrl: slot4BrandConfig.baseUrl,
   },
   nav: {
-    tagline: 'Independent reading platform',
+    tagline: 'Curated resources worth saving',
     primaryLinks: [
-      { label: 'Articles', href: '/articles' },
-      { label: 'Visuals', href: '/image-sharing' },
-      { label: 'Listings', href: '/listings' },
+      { label: 'About', href: '/about' },
       { label: 'Contact', href: '/contact' },
     ],
     actions: {
-      primary: { label: 'Start exploring', href: '/' },
-      secondary: { label: 'Submit', href: '/contact' },
+      primary: { label: 'Browse the library', href: '/sbm' },
+      secondary: { label: 'Get in touch', href: '/contact' },
     },
   },
   footer: {
-    tagline: 'Stories, resources, and discoverable posts',
-    description: 'A connected publishing surface for articles, visuals, listings, profiles, bookmarks, and downloadable resources.',
+    tagline: 'Curated resources, tools, and collections',
+    description: 'A calm discovery surface for curated resources, tools, collections, and links worth saving — organized by topic and kept useful.',
     columns: [
       {
-        title: 'Explore',
+        title: 'Collections',
         links: [
-          { label: 'Articles', href: '/articles' },
-          { label: 'Listings', href: '/listings' },
-          { label: 'Images', href: '/image-sharing' },
-          { label: 'PDF Library', href: '/pdf' },
+          { label: 'All resources', href: '/sbm' },
+          { label: 'Tools', href: '/sbm?category=tools' },
+          { label: 'Design', href: '/sbm?category=design' },
+          { label: 'Development', href: '/sbm?category=development' },
+          { label: 'Reference', href: '/sbm?category=reference' },
         ],
       },
       {
@@ -41,14 +44,14 @@ export const globalContent = {
         ],
       },
     ],
-    bottomNote: 'Built for clean discovery and connected publishing.',
+    bottomNote: 'Built for calm discovery and curated collections.',
   },
   commonLabels: {
-    readMore: 'Read more',
+    readMore: 'View resource',
     viewAll: 'View all',
     explore: 'Explore',
     latest: 'Latest',
     related: 'Related',
-    published: 'Published',
+    published: 'Added',
   },
 } as const
