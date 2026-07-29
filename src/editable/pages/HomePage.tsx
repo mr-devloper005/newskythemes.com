@@ -4,8 +4,18 @@ import { SITE_CONFIG, type TaskKey } from '@/lib/site-config'
 import { buildPageMetadata } from '@/lib/seo'
 import { fetchHomeTaskFeed, fetchHomeTimeSections, type HomeTimeSection } from '@/lib/task-data'
 import { pagesContent } from '@/editable/content/pages.content'
+import { isUiHiddenTask } from '@/editable/content/global.content'
 import type { SitePost } from '@/lib/site-connector'
-import { EditableHomeCta, EditableHomeHero, EditableMagazineSplit, EditableStoryRail, EditableTimeCollections } from '@/editable/sections/HomeSections'
+import {
+  EditableHomeCta,
+  EditableHomeHero,
+  EditableFeatures,
+  EditableMagazineSplit,
+  EditableStoryRail,
+  EditableStatsBand,
+  EditableTimeCollections,
+  EditableFaq,
+} from '@/editable/sections/HomeSections'
 import { EditableSiteShell } from '@/editable/shell/EditableSiteShell'
 import { Ads } from '@/lib/ads'
 export const revalidate = 300
@@ -29,7 +39,7 @@ function uniquePosts(posts: SitePost[]) {
 }
 
 export default async function HomePage() {
-  const primaryTask = (SITE_CONFIG.tasks.find((task) => task.enabled)?.key || 'article') as TaskKey
+  const primaryTask = (SITE_CONFIG.tasks.find((t) => t.enabled && !isUiHiddenTask(t.key))?.key || 'sbm') as TaskKey
   const primaryRoute = SITE_CONFIG.taskViews[primaryTask] || `/${primaryTask}`
   const taskFeed: TaskFeedItem[] = await fetchHomeTaskFeed(12, { timeoutMs: 2500 })
   const primaryPosts = uniquePosts(taskFeed.find(({ task }) => task.key === primaryTask)?.posts || taskFeed.flatMap(({ posts }) => posts)).slice(0, 24)
@@ -39,34 +49,31 @@ export default async function HomePage() {
   return (
     <EditableSiteShell>
       <main>
-      <SchemaJsonLd
-        data={{
-          '@context': 'https://schema.org',
-          '@type': 'WebSite',
-          name: SITE_CONFIG.name,
-          url: baseUrl,
-          potentialAction: {
-            '@type': 'SearchAction',
-            target: `${baseUrl}/search?q={search_term_string}`,
-            'query-input': 'required name=search_term_string',
-          },
-        }}
-      />
-      <EditableHomeHero primaryTask={primaryTask} primaryRoute={primaryRoute} posts={primaryPosts} timeSections={timeSections} />
-      <div className="mx-auto max-w-6xl px-4 py-6">
-  <Ads slot="header" showLabel eager className="mx-auto w-full" />
-</div>
-
-      <EditableStoryRail primaryTask={primaryTask} primaryRoute={primaryRoute} posts={primaryPosts} timeSections={timeSections} />
-      <EditableMagazineSplit primaryTask={primaryTask} primaryRoute={primaryRoute} posts={primaryPosts} timeSections={timeSections} />
-
-      <EditableTimeCollections primaryTask={primaryTask} primaryRoute={primaryRoute} posts={primaryPosts} timeSections={timeSections} />
-      <div className="mx-auto max-w-6xl px-4 py-6">
-  <Ads slot="sidebar" showLabel eager className="mx-auto w-full" />
-</div>
-      <EditableHomeCta />
+        <SchemaJsonLd
+          data={{
+            '@context': 'https://schema.org',
+            '@type': 'WebSite',
+            name: SITE_CONFIG.name,
+            url: baseUrl,
+            potentialAction: {
+              '@type': 'SearchAction',
+              target: `${baseUrl}/search?q={search_term_string}`,
+              'query-input': 'required name=search_term_string',
+            },
+          }}
+        />
+        <EditableHomeHero primaryTask={primaryTask} primaryRoute={primaryRoute} posts={primaryPosts} timeSections={timeSections} />
+        <EditableStoryRail primaryTask={primaryTask} primaryRoute={primaryRoute} posts={primaryPosts} timeSections={timeSections} />
+        <div className="mx-auto max-w-[var(--editable-container)] px-5 py-6 sm:px-8 lg:px-10">
+          <Ads slot="header" showLabel eager className="mx-auto w-full" />
+        </div>
+        <EditableFeatures />
+        <EditableMagazineSplit primaryTask={primaryTask} primaryRoute={primaryRoute} posts={primaryPosts} timeSections={timeSections} />
+        <EditableStatsBand primaryTask={primaryTask} primaryRoute={primaryRoute} posts={primaryPosts} timeSections={timeSections} />
+        <EditableTimeCollections primaryTask={primaryTask} primaryRoute={primaryRoute} posts={primaryPosts} timeSections={timeSections} />
+        <EditableFaq />
+        <EditableHomeCta />
       </main>
     </EditableSiteShell>
   )
 }
-
