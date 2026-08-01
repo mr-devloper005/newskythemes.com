@@ -258,7 +258,7 @@ function BookmarkDetail({ post, related }: { post: SitePost; related: SitePost[]
             <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-[var(--tk-muted)]">Collection index</p>
             <div className="mt-5 divide-y divide-[var(--tk-line)]">
               <div className="grid grid-cols-[36px_1fr] items-start gap-3 py-3">
-                
+                <span className="editable-display text-lg font-medium text-[var(--tk-accent)]">01</span>
                
               </div>
               {related.map((item, i) => (
