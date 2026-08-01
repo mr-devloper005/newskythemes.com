@@ -259,10 +259,7 @@ function BookmarkDetail({ post, related }: { post: SitePost; related: SitePost[]
             <div className="mt-5 divide-y divide-[var(--tk-line)]">
               <div className="grid grid-cols-[36px_1fr] items-start gap-3 py-3">
                 <span className="editable-display text-lg font-medium text-[var(--tk-accent)]">01</span>
-                <div className="min-w-0">
-                  <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--tk-accent)]">Reading now</p>
-                  <p className="mt-1 line-clamp-2 text-[13px] font-medium leading-5">{post.title}</p>
-                </div>
+               
               </div>
               {related.map((item, i) => (
                 <Link key={item.id || item.slug} href={`/sbm/${item.slug}`} className="grid grid-cols-[36px_1fr] items-start gap-3 py-3 transition duration-300 hover:bg-[var(--tk-raised)]">
