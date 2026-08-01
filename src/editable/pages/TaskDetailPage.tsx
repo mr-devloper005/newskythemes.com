@@ -257,13 +257,10 @@ function BookmarkDetail({ post, related }: { post: SitePost; related: SitePost[]
           <div className="rounded border border-[var(--tk-line)] bg-[var(--tk-surface)] p-6">
             <p className="text-[11px] font-medium uppercase tracking-[0.24em] text-[var(--tk-muted)]">Collection index</p>
             <div className="mt-5 divide-y divide-[var(--tk-line)]">
-              <div className="grid grid-cols-[36px_1fr] items-start gap-3 py-3">
-                
-               
-              </div>
+              
               {related.map((item, i) => (
                 <Link key={item.id || item.slug} href={`/sbm/${item.slug}`} className="grid grid-cols-[36px_1fr] items-start gap-3 py-3 transition duration-300 hover:bg-[var(--tk-raised)]">
-                  <span className="editable-display text-lg font-medium text-[var(--tk-muted)]">{String(i + 2).padStart(2, '0')}</span>
+                  <span className="editable-display text-lg font-medium text-[var(--tk-muted)]">{String(i + 1).padStart(1, '0')}</span>
                   <p className="line-clamp-2 text-[13px] font-medium leading-5 text-[var(--tk-text)] transition duration-300 hover:text-[var(--tk-accent)]">
                     {item.title}
                   </p>
